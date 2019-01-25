@@ -1,0 +1,5 @@
+---
+- hosts: gateway
+  gather_facts: false
+  roles:
+    - gateway

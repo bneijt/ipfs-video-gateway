@@ -1,0 +1,86 @@
+- name: Update cache if old
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Fix Scaleway.com nasties
+  file:
+    path: "{{ item }}"
+    mode: "g-w"
+  with_items:
+    - /etc
+    - /usr
+
+- name: Install dependencies
+  apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - ufw
+    - nginx
+    - tar
+    - gzip
+
+##Firewall
+- name: Allow services
+  ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  with_items:
+    - ssh
+    - http
+    - 4001
+
+- name: Enable firewall
+  ufw:
+    state: enabled
+
+## ipfs
+- name: Add ipfs user
+  user:
+    name: ipfs
+    shell: /usr/sbin/nologin
+    password: '!'
+    home: /opt/ipfs
+
+- name: Download IPFS binary
+  unarchive:
+    src: https://dist.ipfs.io/go-ipfs/v0.4.18/go-ipfs_v0.4.18_linux-amd64.tar.gz
+    dest: /opt/ipfs
+    remote_src: yes
+    creates: /opt/ipfs/go-ipfs
+
+- name: Copy service
+  copy:
+    src: "files/ipfs.service"
+    dest: "/etc/systemd/system"
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+
+- name: Init ipfs
+  command: /usr/bin/sudo -u ipfs /opt/ipfs/go-ipfs/ipfs init
+  args:
+    creates: /opt/ipfs/.ipfs
+
+- name: Enable ipfs
+  systemd:
+    name: ipfs
+    enabled: yes
+    state: started
+
+#Proxy
+- name: Copy service
+  copy:
+    src: "files/nginx.conf"
+    dest: "/etc/nginx/nginx.conf"
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+
+- name: Enable ipfs
+  systemd:
+    name: nginx
+    enabled: yes
+    state: restarted
