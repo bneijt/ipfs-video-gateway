@@ -11,13 +11,15 @@
     - /etc
     - /usr
 
+
+
 - name: Install dependencies
   apt:
     name: "{{ packages }}"
   vars:
     packages:
     - ufw
-    - nginx
+    - nginx-full
     - tar
     - gzip
 
