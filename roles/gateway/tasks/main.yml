@@ -72,6 +72,15 @@
     enabled: yes
     state: started
 
+#Pinner
+- name: Deploy pinning webui
+  copy:
+    src: files/pinner
+    dest: /srv/http/
+    owner: ipfs
+    group: ipfs
+    mode: 0644
+
 #Proxy
 - name: Copy service
   copy:
@@ -81,7 +90,7 @@
     group: root
     mode: u=rw,g=r,o=r
 
-- name: Enable ipfs
+- name: Enable nginx
   systemd:
     name: nginx
     enabled: yes
