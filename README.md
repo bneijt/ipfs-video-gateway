@@ -14,4 +14,6 @@ Installation
 
 After provision has finished, you should be able to access the IPFS pinner web interface at your server ip.
 
+Consider trying to pin [Qmb7yZdYZeRoLCvTvjwMzqeS4Jv9jeJuHKCBuUkHoAFhRh](https://ipfstube.erindachtler.me/v/Qmb7yZdYZeRoLCvTvjwMzqeS4Jv9jeJuHKCBuUkHoAFhRh)
+
 **Please note**: Currently there is no security enabled!
