@@ -23,7 +23,9 @@ var app = new Vue({
       pinReload: function() {
         this.lastPinResponse = 'Reloading...';
         axios
-          .get('/api/v0/pin/ls')
+          .get('/api/v0/pin/ls', { params: {
+            type: 'recursive'
+          }})
           .then(response => {this.lastPinResponse = response.statusText; this.pinned = response.data})
           .catch(error => (this.lastPinResponse = error.response.statusText));
       }
