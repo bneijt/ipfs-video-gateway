@@ -3,7 +3,7 @@ Description=IPFS daemon
 After=local-fs.target
 
 [Service]
-ExecStart=/opt/ipfs/go-ipfs/ipfs daemon
+ExecStart=/usr/bin/ipfs daemon
 WorkingDirectory=/opt/ipfs
 User=ipfs
 Group=ipfs

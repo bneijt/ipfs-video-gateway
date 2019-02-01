@@ -1,0 +1,36 @@
+- name: update apt cache
+  apt:
+    update_cache: yes
+
+- name: install packages
+  apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - ufw
+    - nginx-full
+    - tar
+    - gzip
+    - ipfs
+
+- name: enable ufw
+  ufw:
+    state: enabled
+
+
+- name: enable ipfs service
+  systemd:
+    name: ipfs
+    enabled: yes
+    state: started
+
+- name: initialize ipfs
+  command: /usr/bin/sudo -u ipfs /opt/ipfs/go-ipfs/ipfs init
+  args:
+    creates: /opt/ipfs/.ipfs
+
+- name: enable nginx
+  systemd:
+    name: nginx
+    enabled: yes
+    state: restarted
