@@ -9,18 +9,21 @@ Installation
 Using cloud-init
 ---------------
 
-Copy paste the following cloud-init in the advanced configuration section of the Scaleway new server form:
+You can use [cloud-init to configure a Scaleway server](https://www.scaleway.com/docs/how-to-use-cloud-init-to-configure-your-server-at-first-boot/) and have everything automatically done.
 
-  #cloud-config
-  packages:
-    - ansible
-    - git
-  package_update: true
-  package_upgrade: true
-  package_reboot_if_required: true
-  runcmd:
-    - "git clone https://github.com/bneijt/ipfs-video-gateway.git"
-    - "cd ipfs-video-gateway && ansible-playbook --connection=local --inventory=127.0.0.1, playbook.yml"
+Copy paste the following cloud-init in the *Configure advanced options* section of the Scaleway new server form:
+
+    #cloud-config
+    packages:
+      - ansible
+      - git
+      - sudo
+    package_update: true
+    package_upgrade: true
+    package_reboot_if_required: true
+    runcmd:
+      - "git clone https://github.com/bneijt/ipfs-video-gateway.git"
+      - "cd ipfs-video-gateway && ansible-playbook --connection=local --inventory=127.0.0.1, playbook.yml"
 
 
 
