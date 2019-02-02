@@ -49,7 +49,7 @@
     home: /opt/ipfs
 
 - name: initialize ipfs
-  command: /usr/bin/sudo -u ipfs /opt/ipfs/go-ipfs/ipfs init
+  command: /usr/bin/sudo -u ipfs /usr/bin/ipfs init
   args:
     creates: /opt/ipfs/.ipfs
 
