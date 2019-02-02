@@ -10,9 +10,22 @@
     filename: siderus.list
     repo: deb https://get.siderus.io/ apt/
     state: present
-  notify:
-    - update apt cache
-    - install packages
+
+- name: update apt cache
+  apt:
+    update_cache: yes
+
+- name: install packages
+  apt:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - ufw
+    - nginx-full
+    - tar
+    - gzip
+    - ipfs
+
 
 ##Firewall
 - name: allow services
@@ -34,8 +47,11 @@
     shell: /usr/sbin/nologin
     password: '!'
     home: /opt/ipfs
-  notify: initialize ipfs
 
+- name: initialize ipfs
+  command: /usr/bin/sudo -u ipfs /opt/ipfs/go-ipfs/ipfs init
+  args:
+    creates: /opt/ipfs/.ipfs
 
 - name: copy service
   copy:
