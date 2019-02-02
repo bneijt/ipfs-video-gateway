@@ -17,15 +17,14 @@ Copy paste the following cloud-init in the *Configure advanced options* section 
     packages:
       - ansible
       - git
-      - sudo
     package_update: true
     package_upgrade: true
     package_reboot_if_required: true
     runcmd:
       - "git clone https://github.com/bneijt/ipfs-video-gateway.git"
-      - "cd ipfs-video-gateway && HOME=/root PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin ansible-playbook --connection=local --inventory=127.0.0.1, playbook.yml"
+      - "cd ipfs-video-gateway && HOME=/root PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin ansible-playbook --connection=local --inventory=127.0.0.1, playbook.yml 2>&1|/usr/bin/tee /tmp/tee.log"
 
-
+After starting the server, wait for a few minutes for the system to update, install and configure.
 
 
 To remote server via local Ansible
