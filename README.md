@@ -6,8 +6,10 @@ These are Ansible scripts to set up your own [IPFS](https://ipfs.io/) gateway on
 Installation
 ============
 
-Using cloud-init
----------------
+There are two ways of installing the gateway on a server: using the ansible script to remotely provision the server or using the cloud-init snippet below. The cloud-init snippet is the best approach for beginners.
+
+Using cloud-init to provision on server creation
+------------------------------------------------
 
 You can use [cloud-init to configure a Scaleway server](https://www.scaleway.com/docs/how-to-use-cloud-init-to-configure-your-server-at-first-boot/) and have everything automatically done.
 
@@ -27,10 +29,11 @@ Copy paste the following cloud-init in the *Configure advanced options* section 
 After starting the server, wait for a few minutes for the system to update, install and configure.
 
 
-To remote server via local Ansible
---------------------------
+Remote provision using local Ansible installation
+-------------------------------------------------
+
 - Locally install [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
-- [Start a Scaleway Debian server](https://www.scaleway.com/docs/create-and-connect-to-your-server/), a Debian Stretch START1-XS will do
+- Have a debian based server with SSH connectivity ready. You could [start a Scaleway Debian server](https://www.scaleway.com/docs/create-and-connect-to-your-server/), a Debian Stretch START1-XS will do, but you can also use another already running server. Keep in mind however, that the provisioning will override the following: firewall configuration, nginx configuration, repository information
 - Verify that you can ssh into your server
 - Configure the user and ip address in `inventory.yml`
 - Provision the server using `ansible-playbook --inventory-file=inventory.yml playbook.yml`
@@ -39,4 +42,4 @@ After provision has finished, you should be able to access the IPFS pinner web i
 
 Consider trying to pin [Qmb7yZdYZeRoLCvTvjwMzqeS4Jv9jeJuHKCBuUkHoAFhRh](https://ipfstube.erindachtler.me/v/Qmb7yZdYZeRoLCvTvjwMzqeS4Jv9jeJuHKCBuUkHoAFhRh)
 
-**Please note**: Currently there is no security enabled!
+**Please note**: Currently there is no security enabled! After provisioning anybody will be able to pin any content. You can disable pinning by chaning the `/etc/nginx.conf` file by removing the proxy to the ipfs api.
