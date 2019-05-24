@@ -19,14 +19,20 @@ Copy paste the following cloud-init in the *Configure advanced options* section 
     packages:
       - ansible
       - git
+      - whois
     package_update: true
     package_upgrade: true
     package_reboot_if_required: true
     runcmd:
       - "git clone https://github.com/bneijt/ipfs-video-gateway.git"
       - "cd ipfs-video-gateway && HOME=/root PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin ansible-playbook --connection=local --inventory=127.0.0.1, playbook.yml 2>&1|/usr/bin/tee /tmp/tee.log"
+      - "echo admin:`mkpasswd -m sha-256 ADMINPASSWORDHERE` > /etc/nginx/htpasswd"
 
 After starting the server, wait for a few minutes for the system to update, install and configure.
+
+You should see the website come up and you should be able to start pinning content. To pin content you will be requested to
+use a password for the user `admin`. The password is configured above by replacing `ADMINPASSWORDHERE` with the password you want.
+If you forget to do this, the password will simply be the capital letters `ADMINPASSWORDHERE`.
 
 
 Remote provision using local Ansible installation
