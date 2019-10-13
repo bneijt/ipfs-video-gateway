@@ -36,7 +36,6 @@
   with_items:
     - ssh
     - http
-    - 4001
   notify: enable ufw
 
 
