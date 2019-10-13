@@ -40,7 +40,7 @@ textarea {
     margin-right: auto;
     padding-left: 1em;
     padding-right: 1em;
-    max-width: 590px;
+    max-width: 40em;
 }
     </style>
 	</head>
@@ -62,6 +62,7 @@ textarea {
 <div>
   <input type="text" class="cid" v-model="cidToPin" placeholder="content identifier (cid)"  size="50">
   <button v-on:click="pinAdd">Pin this</button>
+  <button v-on:click="viewThis">View this</button>
 </div>
 <div>
   <p>

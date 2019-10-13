@@ -20,6 +20,9 @@ var app = new Vue({
           .then(response => (this.lastPinResponse = response.statusText))
           .catch(error => (this.lastPinResponse = error.response.statusText));
       },
+      viewThis: function() {
+        window.location = '/ipfs/' + this.cidToPin.trim();
+      },
       pinReload: function() {
         this.lastPinResponse = 'Reloading...';
         axios
