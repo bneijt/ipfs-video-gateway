@@ -39,7 +39,7 @@ Remote provision using local Ansible installation
 -------------------------------------------------
 
 - Locally install [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
-- Have a debian based server with SSH connectivity ready. You could [start a Scaleway Debian server](https://www.scaleway.com/docs/create-and-connect-to-your-server/), a Debian Stretch START1-XS will do, but you can also use another already running server. Keep in mind however, that the provisioning will override the following: firewall configuration, nginx configuration, repository information
+- Have a debian based server with SSH connectivity ready. You could [start a Scaleway Debian server](https://www.scaleway.com/docs/create-and-connect-to-your-server/), a Debian Stretch DEV1-S will do, but you can also use another already running server. Keep in mind however, that the provisioning will override the following: firewall configuration, nginx configuration, repository information
 - Verify that you can ssh into your server
 - Configure the user and ip address in `inventory.yml`
 - Provision the server using `ansible-playbook --inventory-file=inventory.yml playbook.yml`
