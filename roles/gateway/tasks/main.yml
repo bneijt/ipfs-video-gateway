@@ -34,9 +34,9 @@
     port: "{{ item }}"
     proto: tcp
   with_items:
-    - ssh
-    - http
-    - 4001
+    - 'ssh'
+    - 'http'
+    - '4001'
   notify: enable ufw
 
 
@@ -49,7 +49,7 @@
     home: /opt/ipfs
 
 - name: initialize ipfs
-  command: /usr/bin/sudo -u ipfs /usr/bin/ipfs init
+  command: /usr/bin/sudo -u ipfs /usr/bin/ipfs init --profile server --empty-repo
   args:
     creates: /opt/ipfs/.ipfs
 
