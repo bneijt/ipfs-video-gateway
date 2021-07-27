@@ -14,12 +14,12 @@ The software is packages as a docker container. Pick any of the following option
 Locally
 -------
 
-Test run with `docker run --volume /opt/ipfs:/ipfs --publish 4000:80 bneijt/ipfs-video-gateway`
+Test run with `docker run --volume /srv/ipfs:/ipfs --publish 4000:80 bneijt/ipfs-video-gateway`
 and visit [localhost:4000](http://localhost:4000) to view the front-end.
 
 If you like it, use daemonize and restart to make it more permanent:
 
-    docker run --volume /opt/ipfs:/ipfs --publish 4000:80 -d --restart=always bneijt/ipfs-video-gateway
+    docker run --volume /srv/ipfs:/ipfs --publish 4000:80 -d --restart=always bneijt/ipfs-video-gateway
 
 Using cloud-init to provision on server creation
 ------------------------------------------------
@@ -32,7 +32,7 @@ Copy paste the following cloud-init in the *Configure advanced options* section 
     packages:
       - docker.io
     runcmd:
-      - "docker run --volume /opt/ipfs:/ipfs --publish 80:80 -d --restart=always bneijt/ipfs-video-gateway"
+      - "docker run --volume /srv/ipfs:/ipfs --publish 80:80 -d --restart=always bneijt/ipfs-video-gateway"
 
 After starting the server, wait for a few minutes for the system to update, install and configure.
 
@@ -43,9 +43,9 @@ The docker container will check to see if there are files in `/ipfs` every 10 se
 
 If you have provisioned a server using cloud-init, you can rsync files to it using:
 
-    rsync --progress -r folder_to_add root@ip_of_server:/opt/ipfs/
+    rsync --progress -r folder_to_add root@ip_of_server:/srv/ipfs/
 
-of if you are running the files locally, use `rsync --progress -r folder_to_add /opt/ipfs/`. **Remember: files in /opt/ipfs will be deleted after adding them to the ipfs index**.
+of if you are running the files locally, use `rsync --progress -r folder_to_add /srv/ipfs/`. **Remember: files in /srv/ipfs will be deleted after adding them to the ipfs index**.
 
 If you have not used `--volume` when starting docker, you can upload the files into the container using [docker cp](https://docs.docker.com/engine/reference/commandline/cp/)
 

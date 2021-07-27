@@ -34,7 +34,7 @@ def init_ipfs() -> Optional[subprocess.Popen]:
     return None
 
 
-def start_ipfs():
+def start_ipfs() -> subprocess.Popen:
     return as_ipfs("ipfs daemon --enable-gc")
 
 
@@ -42,7 +42,7 @@ def as_ipfs(cmd: str) -> subprocess.Popen:
     return subprocess.Popen(["su", "-s", "/bin/bash", "-g", "ipfs", "-c", cmd, "ipfs"])
 
 
-def start_nginx():
+def start_nginx() -> subprocess.Popen:
     return subprocess.Popen(["nginx"])
 
 
@@ -68,7 +68,7 @@ def contains_files(path: str, matcher: Callable[[str], bool]) -> bool:
     return matcher(os.path.basename(path))
 
 
-def check_for_new_files():
+def check_for_new_files() -> None:
     for name in os.listdir(IPFS_HOME):
         if name.startswith(".") or name.endswith(".part"):
             continue

@@ -1,25 +1,27 @@
 var app = new Vue({
   el: '#app',
-  data () {
+  data() {
     return {
-        pinned: [
-        ],
-        cidToPin: '',
-        lastPinResponse: ''
-      };
+      pinned: [
+      ],
+      cidToPin: '',
+      lastPinResponse: ''
+    };
   },
   methods: {
-      pinReload: function() {
-        this.lastPinResponse = 'Reloading...';
-        axios
-          .get('/api/v0/pin/ls', { params: {
+    pinReload: function () {
+      this.lastPinResponse = 'Reloading...';
+      axios
+        .get('/api/v0/pin/ls', {
+          params: {
             type: 'recursive'
-          }})
-          .then(response => {this.lastPinResponse = response.statusText; this.pinned = response.data})
-          .catch(error => (this.lastPinResponse = error.response.statusText));
-      }
+          }
+        })
+        .then(response => { this.lastPinResponse = response.statusText; this.pinned = response.data })
+        .catch(error => (this.lastPinResponse = error.response.statusText));
+    }
   },
-  mounted () {
+  mounted() {
     this.pinReload();
   }
 })
