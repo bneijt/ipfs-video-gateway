@@ -53,6 +53,6 @@ Copy paste the following cloud-init in the *Configure advanced options* section 
     default_user:
       groups: [docker]
   runcmd:
-    - "docker run --volume /opt/ipfs:/ipfs --publish 80:80 -d --restart=always ipfs-video-gateway"
+    - "docker run --volume /opt/ipfs:/ipfs --publish 80:80 -d --restart=always bneijt/ipfs-video-gateway"
 
 After starting the server, wait for a few minutes for the system to update, install and configure.
