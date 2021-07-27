@@ -60,7 +60,7 @@ def wait_for_either(processList: List[subprocess.Popen], in_between: Callable):
 
 def check_for_new_files():
     for name in os.listdir(IPFS_HOME):
-        if name.startswith("."):
+        if name.startswith(".") or name.endswith(".part"):
             continue
         file_path = os.path.join(IPFS_HOME, name)
         logger.info(f"Adding '{file_path}'")
