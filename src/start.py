@@ -58,13 +58,38 @@ def wait_for_either(processList: List[subprocess.Popen], in_between: Callable):
         in_between()
 
 
+def is_hidden_or_part_file(file_name: str) -> bool:
+    return file_name.startswith(".") or file_name.endswith(".part")
+
+
+def contains_files(path: str, matcher: Callable[[str], bool]) -> bool:
+    if os.path.isdir(path):
+        for root, dir, files in os.walk(path):
+            if any(map(matcher, files)):
+                return False
+    return os.path.basename(path).startswith(".")
+
+
 def check_for_new_files():
     for name in os.listdir(IPFS_HOME):
-        if name.startswith("."):
+        if name.startswith(".") or name.endswith(".part"):
             continue
         file_path = os.path.join(IPFS_HOME, name)
+
+        # We ignore the directory if it contains hidden files
+        # and example of this is partial rsync uploads
+        if contains_files(name, is_hidden_or_part_file):
+            logger.info(
+                f"Ignoring '{file_path}' because it contains hidden or partial files"
+            )
+            continue
+
         logger.info(f"Adding '{file_path}'")
-        checked_run(as_ipfs(f"ipfs add --recursive --wrap-with-directory --silent --pin '{file_path}'"))
+        checked_run(
+            as_ipfs(
+                f"ipfs add --recursive --wrap-with-directory --silent --pin '{file_path}'"
+            )
+        )
         if os.path.isdir(file_path):
             shutil.rmtree(file_path)
         else:
