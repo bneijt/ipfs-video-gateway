@@ -2,9 +2,7 @@
 import logging
 import sys
 import os
-import time
 import subprocess
-import pwd
 from typing import Callable, Optional, List
 import shutil
 
@@ -64,10 +62,10 @@ def is_hidden_or_part_file(file_name: str) -> bool:
 
 def contains_files(path: str, matcher: Callable[[str], bool]) -> bool:
     if os.path.isdir(path):
-        for root, dir, files in os.walk(path):
-            if any(map(matcher, files)):
-                return False
-    return os.path.basename(path).startswith(".")
+        for root, dirs, files in os.walk(path):
+            if any(map(matcher, dirs + files)):
+                return True
+    return matcher(os.path.basename(path))
 
 
 def check_for_new_files():
@@ -82,9 +80,11 @@ def check_for_new_files():
             logger.info(
                 f"Ignoring '{file_path}' because it contains hidden or partial files"
             )
+            sys.stdout.flush()
             continue
 
         logger.info(f"Adding '{file_path}'")
+        sys.stdout.flush()
         checked_run(
             as_ipfs(
                 f"ipfs add --recursive --wrap-with-directory --silent --pin '{file_path}'"
