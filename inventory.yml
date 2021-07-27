@@ -1,5 +1,0 @@
-all:
-  hosts:
-    gateway:
-      ansible_host: 163.172.186.250
-      ansible_user: root

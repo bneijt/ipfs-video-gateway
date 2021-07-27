@@ -56,17 +56,12 @@ textarea {
     </div>
     <div class="content" id="app">
 <!-- app -->
-<h2>Already pinned items</h2>
+<h2>Pinned items</h2>
 <ol>
   <li v-for="(item, cid) in pinned.Keys">
      <a v-bind:href="'/ipfs/' + cid" class="cid">{{ cid }}</a>
   </li>
 </ol>
-<div>
-  <input type="text" class="cid" v-model="cidToPin" placeholder="content identifier (cid)"  size="50">
-  <button v-on:click="pinAdd">Pin this</button>
-  <button v-on:click="viewThis">View this</button>
-</div>
 <div>
   <p>
     <pre v-model="lastPinResponse">

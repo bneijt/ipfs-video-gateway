@@ -1,12 +1,17 @@
-Easy IPFS gateway and pinner
-=================
+Easily host files on IPFS
+=========================
 
-These are Ansible scripts to set up your own [IPFS](https://ipfs.io/) gateway on a Debian server including a small web front-end that allows for pinning of IPFS content.
+A docker container containing an HTTP gateway and IPFS node to easily host files on IPFS.
+
+You run the docker container with a shared volume for the ipfs storage. If you add files
+to the volume, they are added to ipfs, pinned and deleted.
 
 Installation
 ============
 
-There are two ways of installing the gateway on a server: using the ansible script to remotely provision the server or using the cloud-init snippet below. The cloud-init snippet is the best approach for beginners.
+Build with `docker build -t ipfs-video-gateway .`
+
+Test with `docker run -p 4000:80 -it ipfs-video-gateway`
 
 Using cloud-init to provision on server creation
 ------------------------------------------------
@@ -15,37 +20,39 @@ You can use [cloud-init to configure a Scaleway server](https://www.scaleway.com
 
 Copy paste the following cloud-init in the *Configure advanced options* section of the Scaleway new server form:
 
-    #cloud-config
-    packages:
-      - ansible
-      - git
-      - whois
-    package_update: true
-    package_upgrade: true
-    package_reboot_if_required: true
-    runcmd:
-      - "git clone https://github.com/bneijt/ipfs-video-gateway.git"
-      - "cd ipfs-video-gateway && HOME=/root PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin ansible-playbook --connection=local --inventory=127.0.0.1, playbook.yml 2>&1|/usr/bin/tee /tmp/tee.log"
-      - "echo admin:`mkpasswd -m sha-256 ADMINPASSWORDHERE` > /etc/nginx/htpasswd"
+  #cloud-config
+
+  apt:
+    sources:
+      docker.list:
+        source: deb [arch=amd64] https://download.docker.com/linux/ubuntu $RELEASE stable
+        keyid: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+
+  packages:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - gnupg-agent
+    - software-properties-common
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
+
+  # Enable ipv4 forwarding, required on CIS hardened machines
+  write_files:
+    - path: /etc/sysctl.d/enabled_ipv4_forwarding.conf
+      content: |
+        net.ipv4.conf.all.forwarding=1
+
+  # create the docker group
+  groups:
+    - docker
+
+  # Add default auto created user to docker group
+  system_info:
+    default_user:
+      groups: [docker]
+  runcmd:
+    - "docker run --volume /opt/ipfs:/ipfs --publish 80:80 -d --restart=always bneijt/ipfs-video-gateway"
 
 After starting the server, wait for a few minutes for the system to update, install and configure.
-
-You should see the website come up and you should be able to start pinning content. To pin content you will be requested to
-use a password for the user `admin`. The password is configured above by replacing `ADMINPASSWORDHERE` with the password you want.
-If you forget to do this, the password will simply be the capital letters `ADMINPASSWORDHERE`.
-
-
-Remote provision using local Ansible installation
--------------------------------------------------
-
-- Locally install [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
-- Have a debian based server with SSH connectivity ready. You could [start a Scaleway Debian server](https://www.scaleway.com/docs/create-and-connect-to-your-server/), a Debian Stretch DEV1-S will do, but you can also use another already running server. Keep in mind however, that the provisioning will override the following: firewall configuration, nginx configuration, repository information
-- Verify that you can ssh into your server
-- Configure the user and ip address in `inventory.yml`
-- Provision the server using `ansible-playbook --inventory-file=inventory.yml playbook.yml`
-
-After provision has finished, you should be able to access the IPFS pinner web interface at your server ip.
-
-Consider trying to pin [Qmb7yZdYZeRoLCvTvjwMzqeS4Jv9jeJuHKCBuUkHoAFhRh](https://ipfstube.erindachtler.me/v/Qmb7yZdYZeRoLCvTvjwMzqeS4Jv9jeJuHKCBuUkHoAFhRh)
-
-**Please note**: Currently there is no security enabled! After provisioning anybody will be able to pin any content. You can disable pinning by chaning the `/etc/nginx.conf` file by removing the proxy to the ipfs api.
