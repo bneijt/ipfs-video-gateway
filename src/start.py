@@ -28,9 +28,14 @@ def checked_run(proc: subprocess.Popen):
 def init_ipfs() -> Optional[subprocess.Popen]:
     if not os.path.exists(os.path.join(IPFS_HOME, ".ipfs")):
         logger.info("Initializing ipfs")
-        return as_ipfs(
+        init_commands = [
             "ipfs init --empty-repo --profile flatfs,server",
-        )
+            "ipfs config Addresses.API /ip4/0.0.0.0/tcp/5001",
+            "ipfs config Addresses.Gateway /ip4/0.0.0.0/tcp/8080",
+        ]
+
+        for ic in init_commands:
+            checked_run(as_ipfs(ic))
     return None
 
 
@@ -97,16 +102,21 @@ def check_for_new_files() -> None:
 
 
 def main():
+    enable_nginx = "DISABLE_NGINX" not in os.environ
+
     checked_run(subprocess.Popen(["chown", "ipfs", IPFS_HOME]))
     checked_run(subprocess.Popen(["chmod", "u+rwx,g+rwx", IPFS_HOME]))
 
-    ipfs_init_process = init_ipfs()
-    nginx_process = start_nginx()
-    if ipfs_init_process:
-        ipfs_init_process.wait()
-    ipfs_process = start_ipfs()
-    wait_for_either([ipfs_process, nginx_process], check_for_new_files)
-    nginx_process.terminate()
+    init_ipfs()
+    subprocess_list = []  # type: List[subprocess.Popen]
+
+    if enable_nginx:
+        subprocess_list.append(start_nginx())
+
+    subprocess_list.append(start_ipfs())
+    wait_for_either(subprocess_list, check_for_new_files)
+    for sp in subprocess_list:
+        sp.terminate()
     return 0
 
 
