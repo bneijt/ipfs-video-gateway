@@ -7,6 +7,7 @@ from typing import Callable, Optional, List
 import shutil
 
 IPFS_HOME = "/ipfs"
+FOLDER_STATUS_CACHE = {}
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -73,32 +74,67 @@ def contains_files(path: str, matcher: Callable[[str], bool]) -> bool:
     return matcher(os.path.basename(path))
 
 
+def ipfs_add(file_path: str):
+    logger.info(f"Adding '{file_path}'")
+    sys.stdout.flush()
+    checked_run(
+        as_ipfs(
+            f"ipfs add --recursive --wrap-with-directory --silent --pin '{file_path}'"
+        )
+    )
+
+
+def is_stable(path: str) -> bool:
+    global FOLDER_STATUS_CACHE
+    current_status = "#".join(
+        [
+            "#".join(
+                [
+                    f"{name}={os.path.getsize(os.path.join(root, name))}"
+                    for name in sorted(files)
+                ]
+            )
+            for root, _, files in os.walk(path)
+        ]
+    )
+    old_state = FOLDER_STATUS_CACHE.get(path)
+    FOLDER_STATUS_CACHE[path] = current_status
+    return old_state is not None and old_state == current_status
+
+
 def check_for_new_files() -> None:
     for name in os.listdir(IPFS_HOME):
         if name.startswith(".") or name.endswith(".part"):
             continue
         file_path = os.path.join(IPFS_HOME, name)
 
-        # We ignore the directory if it contains hidden files
-        # and example of this is partial rsync uploads
-        if contains_files(name, is_hidden_or_part_file):
-            logger.info(
-                f"Ignoring '{file_path}' because it contains hidden or partial files"
-            )
-            sys.stdout.flush()
-            continue
-
-        logger.info(f"Adding '{file_path}'")
-        sys.stdout.flush()
-        checked_run(
-            as_ipfs(
-                f"ipfs add --recursive --wrap-with-directory --silent --pin '{file_path}'"
-            )
-        )
         if os.path.isdir(file_path):
-            shutil.rmtree(file_path)
+            if not contains_files(name, is_hidden_or_part_file):
+                if is_stable(file_path):
+                    ipfs_add(file_path)
+                    shutil.rmtree(file_path)
+                else:
+                    logger.info(
+                        f"Ignoring '{file_path}' because it has changing content"
+                    )
+
+            else:
+                logger.info(
+                    f"Ignoring '{file_path}' because it contains hidden or partial files"
+                )
+                sys.stdout.flush()
+                continue
+
         else:
-            os.unlink(file_path)
+            if not is_hidden_or_part_file(file_path):
+                ipfs_add(file_path)
+                os.unlink(file_path)
+            else:
+                logger.info(
+                    f"Ignoring '{file_path}' because it contains hidden or partial files"
+                )
+                sys.stdout.flush()
+                continue
 
 
 def main():

@@ -1,1 +1,4 @@
 playbook.retry
+.vscode
+dist
+__pycache__
