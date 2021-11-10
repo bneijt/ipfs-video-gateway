@@ -84,8 +84,12 @@ def ipfs_add(file_path: str):
     )
 
 
-def is_stable(path: str) -> bool:
+def is_stable(path: str, forget: bool = False) -> bool:
     global FOLDER_STATUS_CACHE
+    if forget:
+        if path in FOLDER_STATUS_CACHE:
+            del FOLDER_STATUS_CACHE[path]
+        return
     current_status = "#".join(
         [
             "#".join(
@@ -113,6 +117,7 @@ def check_for_new_files() -> None:
                 if is_stable(file_path):
                     ipfs_add(file_path)
                     shutil.rmtree(file_path)
+                    is_stable(file_path, forget=True)
                 else:
                     logger.info(
                         f"Ignoring '{file_path}' because it has changing content"

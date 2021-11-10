@@ -1,0 +1,11 @@
+version: "3.3"
+services:  
+  gateway:
+    image: bneijt/ipfs-video-gateway
+    ports:
+      - "80:80"
+    volumes:
+      - /opt/ipfs:/ipfs
+    deploy:
+      restart_policy:
+        condition: any
