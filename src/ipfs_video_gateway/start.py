@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 import logging
-import sys
 import os
-import subprocess
-from typing import Callable, Optional, List
 import shutil
+import subprocess
+import sys
+from typing import Callable, List, Optional
 
 IPFS_HOME = "/ipfs"
 FOLDER_STATUS_CACHE = {}

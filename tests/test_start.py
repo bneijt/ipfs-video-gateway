@@ -1,5 +1,5 @@
+from ipfs_video_gateway.start import FOLDER_STATUS_CACHE, is_stable
 
-from ipfs_video_gateway.start import is_stable, FOLDER_STATUS_CACHE
 
 def test_is_stable():
     assert is_stable("src") == False, "First time should be unstable"
