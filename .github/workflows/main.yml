@@ -11,8 +11,14 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the repo
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - run: pip install poetry==1.1.7
+      - run: poetry install
+      - run: poetry run pytest tests
+      - run: poetry run poetry-lock-package --build --no-root
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v1

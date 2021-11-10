@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "ipfs-video-gateway"
+version = "1.0.0"
+description = "Docker based IPFS pinning front-end"
+authors = ["Bram Neijt <bram@neijt.nl>"]
+packages = [{ include = "ipfs_video_gateway", from = "src" }]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.5"
+black = "^21.10b0"
+poetry-lock-package = "^0.4.3"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
