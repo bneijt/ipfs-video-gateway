@@ -18,6 +18,7 @@ jobs:
       - run: pip install poetry==1.1.7
       - run: poetry install
       - run: poetry run pytest tests
+      - run: poetry build
       - run: poetry run poetry-lock-package --build --no-root
 
       - name: Log in to Docker Hub
