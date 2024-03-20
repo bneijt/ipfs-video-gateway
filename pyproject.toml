@@ -10,7 +10,7 @@ python = "^3.8"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
-black = "^21.10b0"
+black = "^24.3"
 poetry-lock-package = "^0.4.3"
 
 [build-system]
